@@ -79,10 +79,20 @@ wget -qO /tmp/google-chrome.deb \
 apt-get install -y --no-install-recommends /tmp/google-chrome.deb 2>/dev/null || \
   apt-get install -f -y 2>/dev/null || true
 rm -f /tmp/google-chrome.deb
-# Wrapper: auto-add --no-sandbox so Chrome works as root
+# Wrapper: flags required for Chrome inside a container (no GPU, no D-Bus, limited /dev/shm)
 cat > /usr/local/bin/google-chrome <<'EOF'
 #!/usr/bin/env bash
-exec /usr/bin/google-chrome-stable --no-sandbox --disable-setuid-sandbox "$@"
+exec /usr/bin/google-chrome-stable \
+  --no-sandbox \
+  --disable-setuid-sandbox \
+  --disable-gpu \
+  --disable-software-rasterizer \
+  --disable-dev-shm-usage \
+  --use-gl=swiftshader \
+  --disable-background-networking \
+  --no-first-run \
+  --no-default-browser-check \
+  "$@"
 EOF
 chmod +x /usr/local/bin/google-chrome
 log "Google Chrome installed."
