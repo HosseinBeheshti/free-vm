@@ -71,6 +71,25 @@ if $INSTALL_DESKTOP; then
     2>/dev/null || true
 fi
 
+# ---------- Google Chrome -----------------------------------------------------
+log "Installing Google Chrome …"
+apt-get install -y --no-install-recommends wget gnupg ca-certificates 2>/dev/null || true
+wget -qO /tmp/google-chrome.deb \
+  "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+apt-get install -y --no-install-recommends /tmp/google-chrome.deb 2>/dev/null || \
+  apt-get install -f -y 2>/dev/null || true
+rm -f /tmp/google-chrome.deb
+log "Google Chrome installed."
+
+# ---------- VS Code -----------------------------------------------------------
+log "Installing Visual Studio Code …"
+wget -qO /tmp/vscode.deb \
+  "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
+apt-get install -y --no-install-recommends /tmp/vscode.deb 2>/dev/null || \
+  apt-get install -f -y 2>/dev/null || true
+rm -f /tmp/vscode.deb
+log "VS Code installed."
+
 # ---------- optional: websockify via pip if system package is missing ---------
 if ! command -v websockify &>/dev/null; then
   warn "websockify not found in PATH – installing via pip3 …"
@@ -210,6 +229,10 @@ if [[ -n "$VNC_PASSWORD" ]]; then
 else
   warn "  No VNC password set (open to anyone who can reach port ${NOVNC_PORT})."
 fi
+log ""
+log "  Installed apps (launch from XFCE desktop or terminal):"
+log "    Google Chrome → google-chrome-stable --no-sandbox"
+log "    VS Code       → code --no-sandbox"
 log ""
 log "  Logs:"
 log "    Xvfb    → /tmp/xvfb.log"
