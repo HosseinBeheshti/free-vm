@@ -79,6 +79,12 @@ wget -qO /tmp/google-chrome.deb \
 apt-get install -y --no-install-recommends /tmp/google-chrome.deb 2>/dev/null || \
   apt-get install -f -y 2>/dev/null || true
 rm -f /tmp/google-chrome.deb
+# Wrapper: auto-add --no-sandbox so Chrome works as root
+cat > /usr/local/bin/google-chrome <<'EOF'
+#!/usr/bin/env bash
+exec /usr/bin/google-chrome-stable --no-sandbox --disable-setuid-sandbox "$@"
+EOF
+chmod +x /usr/local/bin/google-chrome
 log "Google Chrome installed."
 
 # ---------- VS Code -----------------------------------------------------------
@@ -88,6 +94,12 @@ wget -qO /tmp/vscode.deb \
 apt-get install -y --no-install-recommends /tmp/vscode.deb 2>/dev/null || \
   apt-get install -f -y 2>/dev/null || true
 rm -f /tmp/vscode.deb
+# Wrapper: auto-add --no-sandbox so VS Code works as root
+cat > /usr/local/bin/code <<'EOF'
+#!/usr/bin/env bash
+exec /usr/bin/code --no-sandbox --user-data-dir /root/.vscode-root "$@"
+EOF
+chmod +x /usr/local/bin/code
 log "VS Code installed."
 
 # ---------- optional: websockify via pip if system package is missing ---------
